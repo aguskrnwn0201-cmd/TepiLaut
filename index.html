@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tepi Laut</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-sky-50 pb-20 text-slate-900">
+  <header class="flex items-center justify-between bg-white px-4 py-3 shadow-sm">
+    <h1 class="text-xl font-bold text-sky-700">Tepi Laut</h1>
+    <span id="offline-badge" class="hidden rounded-full bg-teal-100 px-2 py-1 text-xs text-teal-700">Offline</span>
+  </header>
+
+  <main id="list" class="space-y-3 p-4"></main>
+
+  <nav class="fixed inset-x-0 bottom-0 flex border-t bg-white">
+    <button data-tab="books" class="tab flex-1 py-3 text-sm">📚 Buku Saya</button>
+    <button data-tab="wishlist" class="tab flex-1 py-3 text-sm">🛒 Wishlist</button>
+    <button data-tab="notes" class="tab flex-1 py-3 text-sm">📝 Catatan</button>
+  </nav>
+
+  <button id="add-btn" class="fixed bottom-20 right-4 h-14 w-14 rounded-full bg-sky-600 text-3xl text-white shadow-lg">+</button>
+
+<dialog id="book-dialog" class="m-auto w-11/12 max-w-sm rounded-2xl p-5 backdrop:bg-slate-900/50">
+  <form id="book-form" class="space-y-3">
+    <h2 class="text-lg font-bold text-sky-700">Tambah Buku</h2>
+
+    <input name="title" required placeholder="Judul"
+      class="w-full rounded-lg border border-slate-300 p-2">
+    <input name="author" required placeholder="Penulis"
+      class="w-full rounded-lg border border-slate-300 p-2">
+    <select name="status" class="w-full rounded-lg border border-slate-300 p-2">
+      <option value="reading">Sedang dibaca</option>
+      <option value="read">Selesai</option>
+      <option value="wishlist">Wishlist</option>
+    </select>
+
+    <div class="flex justify-end gap-2 pt-2">
+      <button type="button" id="cancel-btn" class="rounded-lg px-4 py-2 text-slate-500">Batal</button>
+      <button type="submit" class="rounded-lg bg-sky-600 px-4 py-2 text-white">Simpan</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="note-dialog" class="m-auto w-11/12 max-w-sm rounded-2xl p-5 backdrop:bg-slate-900/50">
+  <form id="note-form" class="space-y-3">
+    <h2 class="text-lg font-bold text-sky-700">Tambah Catatan</h2>
+
+    <select name="bookId" required class="w-full rounded-lg border border-slate-300 p-2"></select>
+    <select name="type" class="w-full rounded-lg border border-slate-300 p-2">
+      <option value="quote">Kutipan</option>
+      <option value="note">Catatan bebas</option>
+    </select>
+    <textarea name="content" required rows="4" placeholder="Tulis di sini..."
+      class="w-full rounded-lg border border-slate-300 p-2"></textarea>
+    <input name="page" type="number" min="1" placeholder="Halaman (opsional)"
+      class="w-full rounded-lg border border-slate-300 p-2">
+
+    <div class="flex justify-end gap-2 pt-2">
+      <button type="button" id="cancel-note-btn" class="rounded-lg px-4 py-2 text-slate-500">Batal</button>
+      <button type="submit" class="rounded-lg bg-sky-600 px-4 py-2 text-white">Simpan</button>
+    </div>
+  </form>
+</dialog>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "name": "tepilaut",
+  "version": "1.0.0",
+  "description": "Aplikasi pencatat aktivitas membaca dan daftar keinginan (*wishlist*) buku yang simpel, estetik, dan ringan. Dirancang khusus untuk pembaca dengan waktu terbatas yang menginginkan pencatatan serba cepat tanpa fitur rumit.",
+  "main": "sw.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "dexie": "^4.4.6",
+    "tailwindcss": "^4.3.3"
+  }
+}
