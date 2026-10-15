@@ -5,6 +5,16 @@ const tabs = document.querySelectorAll('.tab');
 const badge = document.getElementById('offline-badge');
 let currentTab = 'books';
 
+const toast = document.getElementById('toast');
+let toastTimer;
+
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.remove('opacity-0');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.add('opacity-0'), 2000);
+}
+
 const STATUS_LABEL = {
   reading: 'Sedang dibaca',
   read: 'Selesai',
@@ -48,12 +58,22 @@ function bookCard(book) {
       await db.notes.where('bookId').equals(book.id).delete();
       await db.books.delete(book.id);
     });
+    showToast('Buku dihapus');
     render();
   });
 
+  const addNote = document.createElement('button');
+  addNote.className = 'text-xs text-sky-700';
+  addNote.textContent = '+ Catatan';
+  addNote.addEventListener('click', () => openNoteDialog(book.id));
+
+  const right = document.createElement('div');
+  right.className = 'flex items-center gap-3';
+  right.append(addNote, del);
+
   const actions = document.createElement('div');
   actions.className = 'mt-3 flex items-center justify-between';
-  actions.append(select, del);
+  actions.append(select, right);
 
   card.append(title, author, actions);
   return card;
@@ -80,6 +100,7 @@ function noteCard(note, book) {
   del.addEventListener('click', async () => {
     if (!confirm('Hapus catatan ini?')) return;
     await db.notes.delete(note.id);
+    showToast('Catatan dihapus');
     render();
   });
 
@@ -138,7 +159,7 @@ const form = document.getElementById('book-form');
 const noteDialog = document.getElementById('note-dialog');
 const noteForm = document.getElementById('note-form');
 
-async function openNoteDialog() {
+async function openNoteDialog(bookId) {
   const books = await db.books.toArray();
   if (books.length === 0) {
     alert('Tambah buku dulu sebelum membuat catatan.');
@@ -153,6 +174,7 @@ async function openNoteDialog() {
     select.append(opt);
   });
   noteForm.reset();
+  if (bookId) noteForm.elements.bookId.value = String(bookId);
   noteDialog.showModal();
 }
 
@@ -183,6 +205,7 @@ form.addEventListener('submit', async (e) => {
   });
 
   dialog.close();
+  showToast('Buku ditambahkan');
   currentTab = status === 'wishlist' ? 'wishlist' : 'books';
   render();
 });
@@ -201,6 +224,7 @@ noteForm.addEventListener('submit', async (e) => {
   });
 
   noteDialog.close();
+  showToast('Catatan disimpan');
   render();
 });
 
