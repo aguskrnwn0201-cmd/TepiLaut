@@ -58,11 +58,16 @@ db.version(1).stores({
 ```
 
 ### 3.2. UI Logic (`js/app.js`) - ringkasan
-* `render()` membaca buku dari Dexie sesuai tab aktif:
+* `render()` membaca data dari Dexie sesuai tab aktif:
   * Tab **Buku Saya**: `where('status').anyOf('reading', 'read')`
   * Tab **Wishlist**: `where('status').equals('wishlist')`
+  * Tab **Catatan**: `orderBy('createdAt').reverse()`, judul buku dicari lewat `Map` berdasarkan `bookId`.
 * Teks dari pengguna dimasukkan dengan `textContent` (bukan `innerHTML`) untuk mencegah injeksi HTML.
-* Form tambah buku memakai elemen `<dialog>` + `showModal()`; status dipilih lewat dropdown (`reading` / `read` / `wishlist`).
+* **Kartu buku** (`bookCard`): judul, penulis, info halaman/harga (jika ada), dropdown ubah status, tombol Edit, "+ Catatan", dan Hapus.
+* **Form buku** memakai satu `<dialog>` untuk tambah dan edit. `openBookDialog(book)` mengisi form jika `book` diberikan; variabel `editingId` menandai mode edit dan di-reset pada event `close` dialog. Kolom kosong diubah ke `undefined` oleh helper `num()`.
+* **Hapus buku** memakai transaksi Dexie (`db.transaction('rw', db.books, db.notes, ...)`) sehingga catatan milik buku ikut terhapus, tanpa data yatim.
+* **Form catatan**: dropdown buku diisi dari database saat dibuka; `openNoteDialog(bookId)` memilih buku otomatis (dipanggil setelah `reset()`). Nilai dropdown berupa string, jadi `bookId` diubah dengan `Number(...)` sebelum disimpan.
+* **Toast** (`showToast`) memberi umpan balik singkat setelah tambah/ubah/hapus.
 * Indikator offline memakai event `online` / `offline` dan `navigator.onLine`.
 
 ### 3.3. Service Worker (`sw.js`) - rencana Phase 3

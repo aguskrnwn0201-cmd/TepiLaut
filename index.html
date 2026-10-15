@@ -24,7 +24,7 @@
 
 <dialog id="book-dialog" class="m-auto w-11/12 max-w-sm rounded-2xl p-5 backdrop:bg-slate-900/50">
   <form id="book-form" class="space-y-3">
-    <h2 class="text-lg font-bold text-sky-700">Tambah Buku</h2>
+    <h2 id="book-dialog-title" class="text-lg font-bold text-sky-700">Tambah Buku</h2>
 
     <input name="title" required placeholder="Judul"
       class="w-full rounded-lg border border-slate-300 p-2">
@@ -35,6 +35,15 @@
       <option value="read">Selesai</option>
       <option value="wishlist">Wishlist</option>
     </select>
+
+    <div class="flex gap-2">
+  <input name="currentPage" type="number" min="0" placeholder="Hlm. terakhir"
+    class="w-1/2 rounded-lg border border-slate-300 p-2">
+  <input name="totalPages" type="number" min="1" placeholder="Total hlm."
+    class="w-1/2 rounded-lg border border-slate-300 p-2">
+</div>
+<input name="price" type="number" min="0" placeholder="Harga (opsional)"
+  class="w-full rounded-lg border border-slate-300 p-2">
 
     <div class="flex justify-end gap-2 pt-2">
       <button type="button" id="cancel-btn" class="rounded-lg px-4 py-2 text-slate-500">Batal</button>

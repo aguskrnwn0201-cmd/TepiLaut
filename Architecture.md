@@ -1,7 +1,7 @@
 # Software Architecture Document (Architecture.md)
 
 ## 1. System Overview
-Aplikasi Simple Book Tracker dirancang menggunakan pola **Offline-First Progressive Web App (PWA)** tanpa ketergantungan pada server backend untuk operasi dasar.
+Aplikasi Simple Book Tracker (Tepi Laut) dirancang menggunakan pola **Offline-First Progressive Web App (PWA)** tanpa ketergantungan pada server backend untuk operasi dasar.
 
 ```
 +-------------------------------------------------------+
@@ -36,34 +36,45 @@ Aplikasi Simple Book Tracker dirancang menggunakan pola **Offline-First Progress
 ## 3. Data Flow & Layering
 
 1. **Presentation Layer:**
-   * HTML/JS Views + Tailwind CSS.
-   * Render data dari lokal state dan menangani input pengguna (Form Tambah Buku, Form Catatan).
+   * HTML/JS Views + Tailwind CSS (CSS hasil build Tailwind CLI).
+   * Render data dari IndexedDB dan menangani input pengguna (form buku, form catatan) lewat elemen `<dialog>`.
 
 2. **Data Access Layer:**
-   * `Dexie.js` sebagai *wrapper* IndexedDB untuk menyederhanakan kueri asinkron (CRUD).
+   * `Dexie.js` (salinan lokal di `js/lib/`) sebagai *wrapper* IndexedDB untuk kueri asinkron (CRUD) dan transaksi.
 
 3. **Storage Layer:**
    * Browser `IndexedDB` untuk menyimpan objek buku, wishlist, dan catatan.
-   * `CacheStorage` via Service Worker untuk menyimpan aset statis (HTML, CSS, JS, Ikon).
+   * `CacheStorage` via Service Worker untuk menyimpan aset statis (HTML, CSS, JS, Dexie, ikon). *(Phase 3)*
 
 ---
 
 ## 4. Data Models & Schema (IndexedDB)
 
+Database: `SimpleBookTrackerDB` (versi 1). Pada Dexie hanya kolom yang dipakai untuk filter/pengurutan yang diindeks; kolom lain tetap tersimpan sebagai bagian objek.
+
 ### Store: `books`
-* `id` (Auto-Increment Integer / UUID Primary Key)
+Skema Dexie: `++id, title, status, createdAt`
+
+* `id` (Auto-Increment Integer, Primary Key)
 * `title` (String, Indexed)
 * `author` (String)
-* `status` (Enum: `'reading'`, `'read'`, `'wishlist'`)
+* `status` (Enum: `'reading'`, `'read'`, `'wishlist'`, Indexed, dipakai untuk filter tab)
 * `currentPage` (Integer, Optional)
 * `totalPages` (Integer, Optional)
 * `price` (Number, Optional)
-* `createdAt` (Timestamp)
+* `createdAt` (Timestamp `Date.now()`, Indexed)
 
 ### Store: `notes`
-* `id` (Auto-Increment Integer / UUID Primary Key)
-* `bookId` (Foreign Key -> `books.id`, Indexed)
-* `type` (Enum: `'quote'`, `'note'`)
+Skema Dexie: `++id, bookId, type, createdAt`
+
+* `id` (Auto-Increment Integer, Primary Key)
+* `bookId` (Integer, relasi ke `books.id`, Indexed; harus bertipe **angka**, bukan string)
+* `type` (Enum: `'quote'`, `'note'`, Indexed)
 * `content` (Text)
 * `page` (Integer, Optional)
-* `createdAt` (Timestamp)
+* `createdAt` (Timestamp `Date.now()`, Indexed, dipakai mengurutkan catatan terbaru)
+
+### Aturan Integritas Data
+* **Hapus buku = hapus catatannya.** Penghapusan dilakukan dalam satu transaksi (`db.transaction('rw', db.books, db.notes, ...)`) agar tidak ada catatan yatim.
+* Kolom opsional yang dikosongkan disimpan sebagai `undefined` (properti dihapus), bukan string kosong.
+* Status hanya boleh salah satu dari tiga nilai di atas; input status memakai dropdown, bukan teks bebas.

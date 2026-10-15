@@ -14,8 +14,9 @@ Aplikasi pencatat aktivitas membaca dan daftar keinginan (*wishlist*) buku yang 
 
 ## 📍 Status Pengembangan
 * ✅ Setup proyek, Tailwind CLI, dan database lokal (Dexie.js)
-* ✅ Kerangka UI, daftar buku per tab, dan form tambah buku
-* 🔜 Hapus/ubah status buku, catatan & quotes, mode gelap
+* ✅ Kelola buku: tambah, edit, ubah status, hapus, dan wishlist
+* ✅ Catatan & kutipan terhubung ke buku, termasuk tombol cepat di kartu buku
+* 🔜 Mode gelap dan pengujian di HP
 * 🔜 PWA (manifest, service worker, ikon) dan build APK
 
 Rincian lengkap ada di [Roadmap.md](./Roadmap.md).

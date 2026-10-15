@@ -33,6 +33,15 @@ function bookCard(book) {
   author.className = 'text-sm text-slate-500';
   author.textContent = book.author || '-';
 
+  const info = document.createElement('p');
+  info.className = 'mt-1 text-xs text-slate-400';
+  const parts = [];
+  if (book.currentPage) {
+    parts.push(`hlm. ${book.currentPage}` + (book.totalPages ? ` / ${book.totalPages}` : ''));
+  }
+  if (book.price) parts.push('Rp ' + book.price.toLocaleString('id-ID'));
+  info.textContent = parts.join(' · ');
+
   // Dropdown ubah status
   const select = document.createElement('select');
   select.className = 'rounded-lg border border-slate-300 bg-sky-50 px-2 py-1 text-xs text-sky-700';
@@ -67,15 +76,20 @@ function bookCard(book) {
   addNote.textContent = '+ Catatan';
   addNote.addEventListener('click', () => openNoteDialog(book.id));
 
+  const edit = document.createElement('button');
+  edit.className = 'text-xs text-slate-600';
+  edit.textContent = 'Edit';
+  edit.addEventListener('click', () => openBookDialog(book));
+
   const right = document.createElement('div');
   right.className = 'flex items-center gap-3';
-  right.append(addNote, del);
+  right.append(edit, addNote, del);
 
   const actions = document.createElement('div');
   actions.className = 'mt-3 flex items-center justify-between';
   actions.append(select, right);
 
-  card.append(title, author, actions);
+  card.append(title, author, info, actions);
   return card;
 }
 
@@ -159,6 +173,29 @@ const form = document.getElementById('book-form');
 const noteDialog = document.getElementById('note-dialog');
 const noteForm = document.getElementById('note-form');
 
+let editingId = null;
+dialog.addEventListener('close', () => {
+  editingId = null;
+});
+
+function openBookDialog(book) {
+  editingId = book ? book.id : null;
+  form.reset();
+  document.getElementById('book-dialog-title').textContent = book ? 'Edit Buku' : 'Tambah Buku';
+
+  if (book) {
+    form.elements.title.value = book.title;
+    form.elements.author.value = book.author || '';
+    form.elements.status.value = book.status;
+    form.elements.currentPage.value = book.currentPage ?? '';
+    form.elements.totalPages.value = book.totalPages ?? '';
+    form.elements.price.value = book.price ?? '';
+  } else {
+    form.elements.status.value = currentTab === 'wishlist' ? 'wishlist' : 'reading';
+  }
+  dialog.showModal();
+}
+
 async function openNoteDialog(bookId) {
   const books = await db.books.toArray();
   if (books.length === 0) {
@@ -183,6 +220,8 @@ document.getElementById('add-btn').addEventListener('click', () => {
     openNoteDialog();
     return;
   }
+  openBookDialog();
+
   form.reset();
   form.elements.status.value = currentTab === 'wishlist' ? 'wishlist' : 'reading';
   dialog.showModal();
@@ -192,20 +231,32 @@ document.getElementById('cancel-note-btn').addEventListener('click', () => noteD
 
 document.getElementById('cancel-btn').addEventListener('click', () => dialog.close());
 
+const num = (v) => (v === '' ? undefined : Number(v));
+
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   const data = new FormData(form);
   const status = data.get('status');
 
-  await db.books.add({
+  const fields = {
     title: data.get('title').trim(),
     author: data.get('author').trim(),
     status,
-    createdAt: Date.now()
-  });
+    currentPage: num(data.get('currentPage')),
+    totalPages: num(data.get('totalPages')),
+    price: num(data.get('price'))
+  };
 
+  if (editingId) {
+    await db.books.update(editingId, fields);
+    showToast('Buku diperbarui');
+  } else {
+    await db.books.add({ ...fields, createdAt: Date.now() });
+    showToast('Buku ditambahkan');
+  }
+
+  editingId = null;
   dialog.close();
-  showToast('Buku ditambahkan');
   currentTab = status === 'wishlist' ? 'wishlist' : 'books';
   render();
 });
