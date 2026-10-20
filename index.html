@@ -22,28 +22,51 @@
 
   <button id="add-btn" class="fixed bottom-20 right-4 h-14 w-14 rounded-full bg-sky-600 text-3xl text-white shadow-lg">+</button>
 
-<dialog id="book-dialog" class="m-auto w-11/12 max-w-sm rounded-2xl p-5 backdrop:bg-slate-900/50">
+<dialog id="book-dialog" class="m-auto max-h-[90vh] w-11/12 max-w-sm overflow-y-auto rounded-2xl p-5 backdrop:bg-slate-900/50">
   <form id="book-form" class="space-y-3">
     <h2 id="book-dialog-title" class="text-lg font-bold text-sky-700">Tambah Buku</h2>
 
-    <input name="title" required placeholder="Judul"
-      class="w-full rounded-lg border border-slate-300 p-2">
-    <input name="author" required placeholder="Penulis"
-      class="w-full rounded-lg border border-slate-300 p-2">
-    <select name="status" class="w-full rounded-lg border border-slate-300 p-2">
-      <option value="reading">Sedang dibaca</option>
-      <option value="read">Selesai</option>
-      <option value="wishlist">Wishlist</option>
-    </select>
-
-    <div class="flex gap-2">
-  <input name="currentPage" type="number" min="0" placeholder="Hlm. terakhir"
-    class="w-1/2 rounded-lg border border-slate-300 p-2">
-  <input name="totalPages" type="number" min="1" placeholder="Total hlm."
-    class="w-1/2 rounded-lg border border-slate-300 p-2">
-</div>
-<input name="price" type="number" min="0" placeholder="Harga (opsional)"
-  class="w-full rounded-lg border border-slate-300 p-2">
+    <label class="block text-xs text-slate-500">Judul *
+      <input name="title" required class="field mt-1">
+    </label>
+    <label class="block text-xs text-slate-500">Jumlah halaman
+      <input name="totalPages" type="number" min="1" class="field mt-1">
+    </label>
+    <label class="block text-xs text-slate-500">Bahasa
+      <input name="language" class="field mt-1">
+    </label>
+    <label class="block text-xs text-slate-500">Penulis *
+      <input name="author" required class="field mt-1">
+    </label>
+    <label class="block text-xs text-slate-500">Penerjemah
+      <input name="translator" class="field mt-1">
+    </label>
+    <label class="block text-xs text-slate-500">Ilustrator
+      <input name="illustrator" class="field mt-1">
+    </label>
+    <label class="block text-xs text-slate-500">Penerbit
+      <input name="publisher" class="field mt-1">
+    </label>
+    <label class="block text-xs text-slate-500">Cetakan
+      <input name="edition" placeholder="mis. Cetakan ke-3" class="field mt-1">
+    </label>
+    <label class="block text-xs text-slate-500">Blurb
+      <textarea name="blurb" rows="3" class="field mt-1"></textarea>
+    </label>
+    <label class="block text-xs text-slate-500">Harga
+      <input name="price" type="number" min="0" class="field mt-1">
+    </label>
+    <label class="block text-xs text-slate-500">Status *
+      <select name="status" class="field mt-1">
+        <option value="unread">Belum dibaca</option>
+        <option value="reading">Sedang dibaca</option>
+        <option value="read">Selesai</option>
+        <option value="wishlist">Wishlist</option>
+      </select>
+    </label>
+    <label class="block text-xs text-slate-500">Kepemilikan
+      <input name="ownership" class="field mt-1">
+    </label>
 
     <div class="flex justify-end gap-2 pt-2">
       <button type="button" id="cancel-btn" class="rounded-lg px-4 py-2 text-slate-500">Batal</button>

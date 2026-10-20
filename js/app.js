@@ -16,10 +16,14 @@ function showToast(message) {
 }
 
 const STATUS_LABEL = {
+  unread: 'Belum dibaca',
   reading: 'Sedang dibaca',
   read: 'Selesai',
   wishlist: 'Wishlist'
 };
+
+const TEXT_FIELDS = ['title', 'language', 'author', 'translator', 'illustrator', 'publisher', 'edition', 'blurb', 'ownership'];
+const NUM_FIELDS = ['totalPages', 'price'];
 
 function bookCard(book) {
   const card = document.createElement('div');
@@ -35,14 +39,14 @@ function bookCard(book) {
 
   const info = document.createElement('p');
   info.className = 'mt-1 text-xs text-slate-400';
-  const parts = [];
-  if (book.currentPage) {
-    parts.push(`hlm. ${book.currentPage}` + (book.totalPages ? ` / ${book.totalPages}` : ''));
-  }
+    const parts = [];
+  if (book.totalPages) parts.push(`${book.totalPages} hlm.`);
+  if (book.publisher) parts.push(book.publisher);
   if (book.price) parts.push('Rp ' + book.price.toLocaleString('id-ID'));
+  if (book.ownership) parts.push(book.ownership);
   info.textContent = parts.join(' · ');
 
-  // Dropdown ubah status
+   // Dropdown ubah status
   const select = document.createElement('select');
   select.className = 'rounded-lg border border-slate-300 bg-sky-50 px-2 py-1 text-xs text-sky-700';
   for (const [value, label] of Object.entries(STATUS_LABEL)) {
@@ -146,7 +150,7 @@ async function render() {
 
   const books = currentTab === 'wishlist'
     ? await db.books.where('status').equals('wishlist').toArray()
-    : await db.books.where('status').anyOf('reading', 'read').toArray();
+    : await db.books.where('status').anyOf('unread', 'reading', 'read').toArray();
 
   if (books.length === 0) {
     list.textContent = 'Belum ada buku.';
@@ -184,15 +188,14 @@ function openBookDialog(book) {
   document.getElementById('book-dialog-title').textContent = book ? 'Edit Buku' : 'Tambah Buku';
 
   if (book) {
-    form.elements.title.value = book.title;
-    form.elements.author.value = book.author || '';
+    [...TEXT_FIELDS, ...NUM_FIELDS].forEach((f) => {
+      form.elements[f].value = book[f] ?? '';
+    });
     form.elements.status.value = book.status;
-    form.elements.currentPage.value = book.currentPage ?? '';
-    form.elements.totalPages.value = book.totalPages ?? '';
-    form.elements.price.value = book.price ?? '';
   } else {
     form.elements.status.value = currentTab === 'wishlist' ? 'wishlist' : 'reading';
   }
+  dialog.scrollTop = 0;
   dialog.showModal();
 }
 
@@ -221,31 +224,22 @@ document.getElementById('add-btn').addEventListener('click', () => {
     return;
   }
   openBookDialog();
-
-  form.reset();
-  form.elements.status.value = currentTab === 'wishlist' ? 'wishlist' : 'reading';
-  dialog.showModal();
 });
-
 document.getElementById('cancel-note-btn').addEventListener('click', () => noteDialog.close());
 
 document.getElementById('cancel-btn').addEventListener('click', () => dialog.close());
 
 const num = (v) => (v === '' ? undefined : Number(v));
+const text = (v) => (v.trim() === '' ? undefined : v.trim());
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   const data = new FormData(form);
   const status = data.get('status');
 
-  const fields = {
-    title: data.get('title').trim(),
-    author: data.get('author').trim(),
-    status,
-    currentPage: num(data.get('currentPage')),
-    totalPages: num(data.get('totalPages')),
-    price: num(data.get('price'))
-  };
+  const fields = { status };
+  TEXT_FIELDS.forEach((f) => { fields[f] = text(data.get(f)); });
+  NUM_FIELDS.forEach((f) => { fields[f] = num(data.get(f)); });
 
   if (editingId) {
     await db.books.update(editingId, fields);

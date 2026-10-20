@@ -14,23 +14,35 @@
 
 ## 2. User Interface Layouts
 
-### 2.1. Navigation & Header
-* Header ringkas berlogo/berjudul **"Tepi Laut"** beserta indikator status *Offline*.
+### 2.1. Splash Screen & Identitas
+* Splash screen menampilkan **logo aplikasi milik pengguna** di tengah dengan latar sesuai tema (Ice Blue / Deep Navy).
+* Logo yang sama dipakai sebagai ikon PWA/APK (192x192, 512x512, dan versi *maskable*).
+
+### 2.2. Navigation & Header
+* Header ringkas berjudul **"Tepi Laut"** beserta indikator status *Offline*.
 * Tab Navigasi Utama (Bottom Bar di HP):
-  1. 📚 **Buku Saya** (Sedang Dibaca & Selesai)
+  1. 📚 **Buku Saya** (Belum Dibaca, Sedang Dibaca & Selesai)
   2. 🛒 **Wishlist**
   3. 📝 **Catatan & Quotes**
 
-### 2.2. Card Design (Buku & Wishlist)
-* **Buku Card:** Judul (Bold), Penulis, Status Tag (Badge Warna Biru/Teal), dan tombol cepat + Catatan / Update Halaman.
-* **Wishlist Card:** Judul, Penulis, Catatan Toko/Harga, tombol "Pindahkan ke Reading" jika sudah dibeli.
+### 2.3. Card Design (Buku & Wishlist)
+* **Buku Card:** Foto sampul (thumbnail, dengan placeholder bila belum ada foto), Judul (Bold), Penulis, Status, dan aksi cepat: ubah status, Edit, + Catatan, Hapus.
+* **Wishlist Card:** Sama seperti Buku Card, ditambah harga dan kepemilikan bila terisi.
+* Mengetuk kartu membuka **Halaman Detail Buku**.
 
-### 2.3. Form Design
-* Modal / Sheet pop-up sederhana bertema biru laut untuk input buku atau catatan baru.
-* Maksimal 3 kolom wajib: Judul, Penulis, dan Status.
+### 2.4. Halaman Detail Buku
+* Foto sampul besar, judul, penulis, dan seluruh data buku (jumlah halaman, bahasa, penerjemah, ilustrator, penerbit, cetakan, harga, kepemilikan).
+* **Blurb** ditampilkan sebagai teks yang rapi.
+* Daftar **semua catatan dan kutipan** buku tersebut (terbaru di atas), dengan tombol + Catatan.
+
+### 2.4.1. Form Design
+* Modal / Sheet pop-up bertema biru laut untuk input buku atau catatan baru; modal dapat di-*scroll* karena kolomnya banyak.
+* **Urutan kolom form buku:** Foto sampul (opsional), Judul, Jumlah halaman, Bahasa, Penulis, Penerjemah, Ilustrator, Penerbit, Cetakan, Blurb, Harga, Status (dropdown: Belum dibaca, Sedang dibaca, Selesai, Wishlist), Kepemilikan (teks bebas).
+* Kolom **wajib** hanya tiga: Judul, Penulis, dan Status. Sisanya opsional.
 
 ---
 
 ## 3. UI Interaction Rules
 * **Modals:** Animasi transisi halus seperti ombak tenang saat membuka form tambah data.
-* **Instant Feedback:** Notifikasi toast sederhana bernuansa teal/biru saat sukses menambah atau menghapus data.
+* **Instant Feedback:** Notifikasi toast sederhana bernuansa teal/biru saat sukses menambah, mengubah, atau menghapus data.
+* **Konfirmasi:** Penghapusan data meminta konfirmasi singkat.

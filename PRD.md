@@ -1,46 +1,48 @@
-# Product Requirements Document (PRD)
+# UI/UX & System Design Specification (Design.md)
 
-## 1. Executive Summary
-**Project Name:** Simple Book Tracker & Wishlist (PWA)  
-**Target User:** Personal Use (Minimalist Reader)  
-**Primary Objective:** Menyediakan aplikasi pencatat bacaan dan daftar keinginan (*wishlist*) yang simpel, cepat, tanpa fitur rumit (*low-friction*), serta dapat diakses secara offline via PWA.
-
----
-
-## 2. User Needs & Goals
-* **Problem:** Waktu membaca yang terbatas membuat aplikasi membaca yang terlalu kompleks (banyak statistik, timer, grafik) menjadi menyita waktu dan tidak terpakai.
-* **Goal:** Aplikasi ringan yang memudahkan pengelolaan koleksi buku, pencatatan *wishlist* buku yang ingin dibeli/dibaca, serta penyimpanan catatan dan kutipan (*quotes*) pribadi secara rapi.
-
----
-
-## 3. Core Features Scope (MVP)
-
-### 3.1. Manajemen Buku & Wishlist
-* **Kategori Buku:**
-  * **Reading (Sedang Dibaca):** Mencatat judul, penulis, dan posisi halaman terakhir (opsional).
-  * **Read (Selesai):** Arsip buku yang telah tamat dibaca.
-  * **Wishlist (Ingin Dibaca / Dibeli):** Daftar buku incaran lengkap dengan perkiraan harga atau tempat pembelian (opsional).
-* **Operasi Data:** Tambah, Edit Status, Hapus, dan Filter berdasarkan Kategori.
-
-### 3.2. Catatan & Kutipan Pribadi (*Quotes & Notes*)
-* **Input Kutipan:** Menyimpan petikan kalimat (*quote*) favorit dari buku tertentu.
-* **Refleksi / Catatan Bebas:** Tempat menulis pemikiran pribadi, ringkasan per bab, atau opini singkat.
-* **Relasi Data:** Setiap catatan/kutipan terhubung langsung ke ID buku yang bersangkutan.
-
-### 3.3. Aksesibilitas & Offline Support (PWA)
-* **Installable:** Dapat ditambahkan ke *Home Screen* Android/Desktop.
-* **Offline-First:** Semua data tersimpan di penyimpanan lokal browser (IndexedDB).
+## 1. Visual Aesthetics & Philosophy
+* **Philosophy:** Minimalis, bersih, menenangkan, fokus pada keterbacaan (*readability*), dan bebas dari elemen grafik yang membingungkan. Mengambil inspirasi dari ketenangan suasana pantai dan lautan.
+* **Theme Mode:** Ocean Light & Deep Sea Dark mode (nyaman untuk mata saat membaca dan mencatat).
+* **Color Palette (Tema Tepi Laut):**
+  * Primary Accent: Ocean Blue (`#0284C7` / `#0369A1`)
+  * Neutral Background: Soft Sky Blue / Ice Blue (`#F0F9FF`) atau Deep Navy (`#0F172A`)
+  * Surface Card: Pure White (`#FFFFFF`) / Dark Slate (`#1E293B`)
+  * Secondary / Highlight: Wave Teal / Coastal Aqua (`#0D9488` / `#14B8A6`)
+  * Text Primary: Deep Ocean Slate (`#0F172A`) / Soft Off-White (`#F8FAFC`)
 
 ---
 
-## 4. Tech Stack Recommendation
-* **Frontend:** HTML5, Tailwind CSS, JavaScript (React / Vue / Vanilla JS + Dexie.js for IndexedDB).
-* **PWA:** Web App Manifest (`manifest.json`) + Service Worker.
-* **Storage:** IndexedDB via `Dexie.js`.
+## 2. User Interface Layouts
+
+### 2.1. Splash Screen & Identitas
+* Splash screen menampilkan **logo aplikasi milik pengguna** di tengah dengan latar sesuai tema (Ice Blue / Deep Navy).
+* Logo yang sama dipakai sebagai ikon PWA/APK (192x192, 512x512, dan versi *maskable*).
+
+### 2.2. Navigation & Header
+* Header ringkas berjudul **"Tepi Laut"** beserta indikator status *Offline*.
+* Tab Navigasi Utama (Bottom Bar di HP):
+  1. 📚 **Buku Saya** (Belum Dibaca, Sedang Dibaca & Selesai)
+  2. 🛒 **Wishlist**
+  3. 📝 **Catatan & Quotes**
+
+### 2.3. Card Design (Buku & Wishlist)
+* **Buku Card:** Foto sampul (thumbnail, dengan placeholder bila belum ada foto), Judul (Bold), Penulis, Status, dan aksi cepat: ubah status, Edit, + Catatan, Hapus.
+* **Wishlist Card:** Sama seperti Buku Card, ditambah harga dan kepemilikan bila terisi.
+* Mengetuk kartu membuka **Halaman Detail Buku**.
+
+### 2.4. Halaman Detail Buku
+* Foto sampul besar, judul, penulis, dan seluruh data buku (jumlah halaman, bahasa, penerjemah, ilustrator, penerbit, cetakan, harga, kepemilikan).
+* **Blurb** ditampilkan sebagai teks yang rapi.
+* Daftar **semua catatan dan kutipan** buku tersebut (terbaru di atas), dengan tombol + Catatan.
+
+### 2.4.1. Form Design
+* Modal / Sheet pop-up bertema biru laut untuk input buku atau catatan baru; modal dapat di-*scroll* karena kolomnya banyak.
+* **Urutan kolom form buku:** Foto sampul (opsional), Judul, Jumlah halaman, Bahasa, Penulis, Penerjemah, Ilustrator, Penerbit, Cetakan, Blurb, Harga, Status (dropdown: Belum dibaca, Sedang dibaca, Selesai, Wishlist), Kepemilikan (teks bebas).
+* Kolom **wajib** hanya tiga: Judul, Penulis, dan Status. Sisanya opsional.
 
 ---
 
-## 5. Non-Functional Requirements
-* **Kinerja:** Waktu muat halaman kurang dari 1 detik.
-* **Responsif:** Tampilan optimal untuk layar smartphone (*Mobile-First Design*).
-* **Simplicity:** Maksimal 2 klik untuk memperbarui status atau menambah catatan.
+## 3. UI Interaction Rules
+* **Modals:** Animasi transisi halus seperti ombak tenang saat membuka form tambah data.
+* **Instant Feedback:** Notifikasi toast sederhana bernuansa teal/biru saat sukses menambah, mengubah, atau menghapus data.
+* **Konfirmasi:** Penghapusan data meminta konfirmasi singkat.
