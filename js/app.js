@@ -15,6 +15,16 @@ function showToast(message) {
   toastTimer = setTimeout(() => toast.classList.add('opacity-0'), 2000);
 }
 
+async function resizeImage(file, maxWidth = 600) {
+  const bitmap = await createImageBitmap(file);
+  const scale = Math.min(1, maxWidth / bitmap.width);
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(bitmap.width * scale);
+  canvas.height = Math.round(bitmap.height * scale);
+  canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  return new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.8));
+}
+
 const STATUS_LABEL = {
   unread: 'Belum dibaca',
   reading: 'Sedang dibaca',
@@ -27,7 +37,7 @@ const NUM_FIELDS = ['totalPages', 'price'];
 
 function bookCard(book) {
   const card = document.createElement('div');
-  card.className = 'rounded-xl bg-white p-4 shadow-sm';
+  card.className = 'flex gap-3 rounded-xl bg-white p-4 shadow-sm';
 
   const title = document.createElement('p');
   title.className = 'font-bold';
@@ -90,10 +100,27 @@ function bookCard(book) {
   right.append(edit, addNote, del);
 
   const actions = document.createElement('div');
-  actions.className = 'mt-3 flex items-center justify-between';
+    actions.className = 'mt-3 flex flex-wrap items-center justify-between gap-2';
   actions.append(select, right);
 
-  card.append(title, author, info, actions);
+   const cover = document.createElement('div');
+  cover.className = 'flex h-24 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-sky-100 text-2xl';
+  if (book.cover) {
+    const img = document.createElement('img');
+    img.className = 'h-full w-full object-cover';
+    img.alt = '';
+    img.src = URL.createObjectURL(book.cover);
+    img.onload = () => URL.revokeObjectURL(img.src);
+    cover.append(img);
+  } else {
+    cover.textContent = '📖';
+  }
+
+    const body = document.createElement('div');
+  body.className = 'min-w-0 flex-1';
+  body.append(title, author, info, actions);
+
+  card.append(cover, body);
   return card;
 }
 
@@ -176,17 +203,47 @@ const dialog = document.getElementById('book-dialog');
 const form = document.getElementById('book-form');
 const noteDialog = document.getElementById('note-dialog');
 const noteForm = document.getElementById('note-form');
+let pendingCover = null;   // foto baru yang dipilih
+let currentCover = null;   // foto lama saat mengedit
+let previewUrl = null;
+
+const coverInput = form.elements.cover;
+const coverPreview = document.getElementById('cover-preview');
+
+function showCoverPreview(blob) {
+  if (previewUrl) URL.revokeObjectURL(previewUrl);
+  previewUrl = blob ? URL.createObjectURL(blob) : null;
+  if (previewUrl) coverPreview.src = previewUrl;
+  else coverPreview.removeAttribute('src');
+  coverPreview.classList.toggle('hidden', !blob);
+}
+
+coverInput.addEventListener('change', async () => {
+  const file = coverInput.files[0];
+  if (!file) return;
+  try {
+    pendingCover = await resizeImage(file);
+    showCoverPreview(pendingCover);
+  } catch {
+    showToast('Foto tidak bisa dibaca');
+  }
+});
 
 let editingId = null;
 dialog.addEventListener('close', () => {
   editingId = null;
+  pendingCover = null;
+  currentCover = null;
+  showCoverPreview(null);
 });
 
 function openBookDialog(book) {
   editingId = book ? book.id : null;
   form.reset();
   document.getElementById('book-dialog-title').textContent = book ? 'Edit Buku' : 'Tambah Buku';
-
+  pendingCover = null;
+  currentCover = book?.cover ?? null;
+  showCoverPreview(currentCover);
   if (book) {
     [...TEXT_FIELDS, ...NUM_FIELDS].forEach((f) => {
       form.elements[f].value = book[f] ?? '';
@@ -240,7 +297,7 @@ form.addEventListener('submit', async (e) => {
   const fields = { status };
   TEXT_FIELDS.forEach((f) => { fields[f] = text(data.get(f)); });
   NUM_FIELDS.forEach((f) => { fields[f] = num(data.get(f)); });
-
+  fields.cover = pendingCover ?? currentCover ?? undefined;
   if (editingId) {
     await db.books.update(editingId, fields);
     showToast('Buku diperbarui');

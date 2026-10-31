@@ -26,6 +26,10 @@
   <form id="book-form" class="space-y-3">
     <h2 id="book-dialog-title" class="text-lg font-bold text-sky-700">Tambah Buku</h2>
 
+    <label class="block text-xs text-slate-500">Foto sampul
+      <img id="cover-preview" alt="" class="mt-1 hidden h-40 w-28 rounded-lg object-cover">
+      <input name="cover" type="file" accept="image/*" class="field mt-1">
+    </label>
     <label class="block text-xs text-slate-500">Judul *
       <input name="title" required class="field mt-1">
     </label>
