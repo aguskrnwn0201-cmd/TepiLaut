@@ -1,6 +1,14 @@
 @import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
 @layer components {
   .field {
     @apply w-full rounded-lg border border-slate-300 p-2 text-sm;
+  }
+  .field:is(.dark *) {
+    background-color: var(--color-slate-700, #334155);
+    border-color: var(--color-slate-600, #475569);
+    color: var(--color-slate-100, #f1f5f9);
   }
 }

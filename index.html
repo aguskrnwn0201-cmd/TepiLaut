@@ -1,107 +1,172 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tepi Laut</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0284C7" id="theme-color-meta">
   <link rel="stylesheet" href="css/styles.css">
 </head>
-<body class="bg-sky-50 pb-20 text-slate-900">
-  <header class="flex items-center justify-between bg-white px-4 py-3 shadow-sm">
-    <h1 class="text-xl font-bold text-sky-700">Tepi Laut</h1>
-    <span id="offline-badge" class="hidden rounded-full bg-teal-100 px-2 py-1 text-xs text-teal-700">Offline</span>
+<body class="bg-sky-50 dark:bg-slate-900 pb-20 text-slate-900 dark:text-slate-100 transition-colors duration-300">
+
+  <!-- Header -->
+  <header class="flex items-center justify-between bg-white dark:bg-slate-800 px-4 py-3 shadow-sm sticky top-0 z-10">
+    <h1 class="text-xl font-bold text-sky-700 dark:text-sky-400">📖 Tepi Laut</h1>
+    <div class="flex items-center gap-3">
+      <span id="offline-badge" class="hidden rounded-full bg-teal-100 dark:bg-teal-900 px-2 py-1 text-xs text-teal-700 dark:text-teal-300">Offline</span>
+      <button id="dark-toggle" aria-label="Toggle mode gelap"
+        class="rounded-full p-2 text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+        <span id="dark-icon">🌙</span>
+      </button>
+    </div>
   </header>
 
+  <!-- Main list -->
   <main id="list" class="space-y-3 p-4"></main>
 
-  <nav class="fixed inset-x-0 bottom-0 flex border-t bg-white">
+  <!-- Bottom Nav -->
+  <nav class="fixed inset-x-0 bottom-0 flex border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 z-10">
     <button data-tab="books" class="tab flex-1 py-3 text-sm">📚 Buku Saya</button>
     <button data-tab="wishlist" class="tab flex-1 py-3 text-sm">🛒 Wishlist</button>
     <button data-tab="notes" class="tab flex-1 py-3 text-sm">📝 Catatan</button>
   </nav>
 
-  <button id="add-btn" class="fixed bottom-20 right-4 h-14 w-14 rounded-full bg-sky-600 text-3xl text-white shadow-lg">+</button>
+  <!-- FAB -->
+  <button id="add-btn"
+    class="fixed bottom-20 right-4 h-14 w-14 rounded-full bg-sky-600 dark:bg-sky-500 text-3xl text-white shadow-lg hover:bg-sky-700 dark:hover:bg-sky-600 active:scale-95 transition-all">+</button>
 
-<dialog id="book-dialog" class="m-auto max-h-[90vh] w-11/12 max-w-sm overflow-y-auto rounded-2xl p-5 backdrop:bg-slate-900/50">
-  <form id="book-form" class="space-y-3">
-    <h2 id="book-dialog-title" class="text-lg font-bold text-sky-700">Tambah Buku</h2>
+  <!-- ===================== BOOK DETAIL VIEW ===================== -->
+  <div id="detail-view"
+    class="fixed inset-0 z-20 translate-x-full bg-sky-50 dark:bg-slate-900 transition-transform duration-300 ease-in-out overflow-y-auto">
+    <header class="flex items-center gap-3 bg-white dark:bg-slate-800 px-4 py-3 shadow-sm sticky top-0">
+      <button id="detail-back"
+        class="rounded-full p-2 text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+        aria-label="Kembali">←</button>
+      <h2 id="detail-heading" class="flex-1 truncate text-lg font-bold text-sky-700 dark:text-sky-400"></h2>
+      <button id="detail-edit"
+        class="rounded-lg bg-sky-100 dark:bg-sky-900 px-3 py-1 text-sm text-sky-700 dark:text-sky-300">Edit</button>
+    </header>
 
-    <label class="block text-xs text-slate-500">Foto sampul
-      <img id="cover-preview" alt="" class="mt-1 hidden h-40 w-28 rounded-lg object-cover">
-      <input name="cover" type="file" accept="image/*" class="field mt-1">
-    </label>
-    <label class="block text-xs text-slate-500">Judul *
-      <input name="title" required class="field mt-1">
-    </label>
-    <label class="block text-xs text-slate-500">Jumlah halaman
-      <input name="totalPages" type="number" min="1" class="field mt-1">
-    </label>
-    <label class="block text-xs text-slate-500">Bahasa
-      <input name="language" class="field mt-1">
-    </label>
-    <label class="block text-xs text-slate-500">Penulis *
-      <input name="author" required class="field mt-1">
-    </label>
-    <label class="block text-xs text-slate-500">Penerjemah
-      <input name="translator" class="field mt-1">
-    </label>
-    <label class="block text-xs text-slate-500">Ilustrator
-      <input name="illustrator" class="field mt-1">
-    </label>
-    <label class="block text-xs text-slate-500">Penerbit
-      <input name="publisher" class="field mt-1">
-    </label>
-    <label class="block text-xs text-slate-500">Cetakan
-      <input name="edition" placeholder="mis. Cetakan ke-3" class="field mt-1">
-    </label>
-    <label class="block text-xs text-slate-500">Blurb
-      <textarea name="blurb" rows="3" class="field mt-1"></textarea>
-    </label>
-    <label class="block text-xs text-slate-500">Harga
-      <input name="price" type="number" min="0" class="field mt-1">
-    </label>
-    <label class="block text-xs text-slate-500">Status *
-      <select name="status" class="field mt-1">
-        <option value="unread">Belum dibaca</option>
-        <option value="reading">Sedang dibaca</option>
-        <option value="read">Selesai</option>
-        <option value="wishlist">Wishlist</option>
+    <div class="p-4 space-y-4">
+      <!-- Cover & judul besar -->
+      <div class="flex gap-4">
+        <div id="detail-cover"
+          class="flex h-40 w-28 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-sky-100 dark:bg-slate-700 text-4xl shadow-md">📖</div>
+        <div class="flex-1 min-w-0 space-y-1">
+          <p id="detail-title" class="text-xl font-bold leading-snug"></p>
+          <p id="detail-author" class="text-sm text-slate-500 dark:text-slate-400"></p>
+          <span id="detail-status-badge"
+            class="inline-block rounded-full px-3 py-0.5 text-xs font-medium"></span>
+        </div>
+      </div>
+
+      <!-- Data buku -->
+      <div id="detail-meta" class="rounded-xl bg-white dark:bg-slate-800 p-4 space-y-2 shadow-sm text-sm"></div>
+
+      <!-- Blurb -->
+      <div id="detail-blurb-wrap" class="hidden rounded-xl bg-white dark:bg-slate-800 p-4 shadow-sm">
+        <p class="text-xs font-semibold text-slate-400 dark:text-slate-500 mb-1 uppercase tracking-wide">Blurb</p>
+        <p id="detail-blurb" class="text-sm leading-relaxed text-slate-700 dark:text-slate-300"></p>
+      </div>
+
+      <!-- Catatan buku ini -->
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <p class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide">Catatan & Kutipan</p>
+          <button id="detail-add-note"
+            class="rounded-lg bg-sky-100 dark:bg-sky-900 px-3 py-1 text-xs text-sky-700 dark:text-sky-300">+ Catatan</button>
+        </div>
+        <div id="detail-notes" class="space-y-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== BOOK DIALOG ===================== -->
+  <dialog id="book-dialog" class="m-auto max-h-[90vh] w-11/12 max-w-sm overflow-y-auto rounded-2xl p-5 backdrop:bg-slate-900/50 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100">
+    <form id="book-form" class="space-y-3">
+      <h2 id="book-dialog-title" class="text-lg font-bold text-sky-700 dark:text-sky-400">Tambah Buku</h2>
+
+      <label class="block text-xs text-slate-500 dark:text-slate-400">Foto sampul
+        <img id="cover-preview" alt="" class="mt-1 hidden h-40 w-28 rounded-lg object-cover">
+        <input name="cover" type="file" accept="image/*" class="field mt-1 dark:bg-slate-700 dark:border-slate-600">
+      </label>
+      <label class="block text-xs text-slate-500 dark:text-slate-400">Judul *
+        <input name="title" required class="field mt-1 dark:bg-slate-700 dark:border-slate-600">
+      </label>
+      <label class="block text-xs text-slate-500 dark:text-slate-400">Jumlah halaman
+        <input name="totalPages" type="number" min="1" class="field mt-1 dark:bg-slate-700 dark:border-slate-600">
+      </label>
+      <label class="block text-xs text-slate-500 dark:text-slate-400">Bahasa
+        <input name="language" class="field mt-1 dark:bg-slate-700 dark:border-slate-600">
+      </label>
+      <label class="block text-xs text-slate-500 dark:text-slate-400">Penulis *
+        <input name="author" required class="field mt-1 dark:bg-slate-700 dark:border-slate-600">
+      </label>
+      <label class="block text-xs text-slate-500 dark:text-slate-400">Penerjemah
+        <input name="translator" class="field mt-1 dark:bg-slate-700 dark:border-slate-600">
+      </label>
+      <label class="block text-xs text-slate-500 dark:text-slate-400">Ilustrator
+        <input name="illustrator" class="field mt-1 dark:bg-slate-700 dark:border-slate-600">
+      </label>
+      <label class="block text-xs text-slate-500 dark:text-slate-400">Penerbit
+        <input name="publisher" class="field mt-1 dark:bg-slate-700 dark:border-slate-600">
+      </label>
+      <label class="block text-xs text-slate-500 dark:text-slate-400">Cetakan
+        <input name="edition" placeholder="mis. Cetakan ke-3" class="field mt-1 dark:bg-slate-700 dark:border-slate-600">
+      </label>
+      <label class="block text-xs text-slate-500 dark:text-slate-400">Blurb
+        <textarea name="blurb" rows="3" class="field mt-1 dark:bg-slate-700 dark:border-slate-600"></textarea>
+      </label>
+      <label class="block text-xs text-slate-500 dark:text-slate-400">Harga
+        <input name="price" type="number" min="0" class="field mt-1 dark:bg-slate-700 dark:border-slate-600">
+      </label>
+      <label class="block text-xs text-slate-500 dark:text-slate-400">Status *
+        <select name="status" class="field mt-1 dark:bg-slate-700 dark:border-slate-600">
+          <option value="unread">Belum dibaca</option>
+          <option value="reading">Sedang dibaca</option>
+          <option value="read">Selesai</option>
+          <option value="wishlist">Wishlist</option>
+        </select>
+      </label>
+      <label class="block text-xs text-slate-500 dark:text-slate-400">Kepemilikan
+        <input name="ownership" class="field mt-1 dark:bg-slate-700 dark:border-slate-600">
+      </label>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" id="cancel-btn" class="rounded-lg px-4 py-2 text-slate-500 dark:text-slate-400">Batal</button>
+        <button type="submit" class="rounded-lg bg-sky-600 px-4 py-2 text-white hover:bg-sky-700 active:scale-95 transition-all">Simpan</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ===================== NOTE DIALOG ===================== -->
+  <dialog id="note-dialog" class="m-auto w-11/12 max-w-sm rounded-2xl p-5 backdrop:bg-slate-900/50 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100">
+    <form id="note-form" class="space-y-3">
+      <h2 class="text-lg font-bold text-sky-700 dark:text-sky-400">Tambah Catatan</h2>
+
+      <select name="bookId" required class="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 p-2"></select>
+      <select name="type" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 p-2">
+        <option value="quote">Kutipan</option>
+        <option value="note">Catatan bebas</option>
       </select>
-    </label>
-    <label class="block text-xs text-slate-500">Kepemilikan
-      <input name="ownership" class="field mt-1">
-    </label>
+      <textarea name="content" required rows="4" placeholder="Tulis di sini..."
+        class="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 p-2"></textarea>
+      <input name="page" type="number" min="1" placeholder="Halaman (opsional)"
+        class="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 p-2">
 
-    <div class="flex justify-end gap-2 pt-2">
-      <button type="button" id="cancel-btn" class="rounded-lg px-4 py-2 text-slate-500">Batal</button>
-      <button type="submit" class="rounded-lg bg-sky-600 px-4 py-2 text-white">Simpan</button>
-    </div>
-  </form>
-</dialog>
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" id="cancel-note-btn" class="rounded-lg px-4 py-2 text-slate-500 dark:text-slate-400">Batal</button>
+        <button type="submit" class="rounded-lg bg-sky-600 px-4 py-2 text-white hover:bg-sky-700 active:scale-95 transition-all">Simpan</button>
+      </div>
+    </form>
+  </dialog>
 
-<dialog id="note-dialog" class="m-auto w-11/12 max-w-sm rounded-2xl p-5 backdrop:bg-slate-900/50">
-  <form id="note-form" class="space-y-3">
-    <h2 class="text-lg font-bold text-sky-700">Tambah Catatan</h2>
-
-    <select name="bookId" required class="w-full rounded-lg border border-slate-300 p-2"></select>
-    <select name="type" class="w-full rounded-lg border border-slate-300 p-2">
-      <option value="quote">Kutipan</option>
-      <option value="note">Catatan bebas</option>
-    </select>
-    <textarea name="content" required rows="4" placeholder="Tulis di sini..."
-      class="w-full rounded-lg border border-slate-300 p-2"></textarea>
-    <input name="page" type="number" min="1" placeholder="Halaman (opsional)"
-      class="w-full rounded-lg border border-slate-300 p-2">
-
-    <div class="flex justify-end gap-2 pt-2">
-      <button type="button" id="cancel-note-btn" class="rounded-lg px-4 py-2 text-slate-500">Batal</button>
-      <button type="submit" class="rounded-lg bg-sky-600 px-4 py-2 text-white">Simpan</button>
-    </div>
-  </form>
-</dialog>
-
-<div id="toast" class="pointer-events-none fixed inset-x-0 bottom-24 mx-auto w-fit rounded-full bg-teal-600 px-4 py-2 text-sm text-white opacity-0 transition-opacity"></div>
+  <!-- Toast -->
+  <div id="toast"
+    class="pointer-events-none fixed inset-x-0 bottom-24 mx-auto w-fit rounded-full bg-teal-600 dark:bg-teal-700 px-4 py-2 text-sm text-white opacity-0 transition-opacity z-50"></div>
 
   <script type="module" src="js/app.js"></script>
+  <script src="js/pwa.js"></script>
 </body>
 </html>

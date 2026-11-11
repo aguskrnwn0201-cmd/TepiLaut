@@ -23,16 +23,16 @@ Dokumen ini memuat tahapan pengembangan aplikasi Simple Book Tracker (Tepi Laut)
 ## Phase 2b: Perluasan Fitur & Tampilan (sebelum PWA)
 * [x] Form buku lengkap sesuai urutan: Judul, Jumlah halaman, Bahasa, Penulis, Penerjemah, Ilustrator, Penerbit, Cetakan, Blurb, Harga, Status (dropdown), Kepemilikan (teks bebas). Wajib: Judul, Penulis, Status.
 * [x] Status keempat "Belum dibaca" (`unread`) di form, dropdown kartu, dan filter tab Buku Saya.
-* [ ] Upload foto sampul: pilih file, kecilkan dengan Canvas, simpan sebagai Blob di IndexedDB.
-* [ ] Halaman detail buku: data lengkap, blurb, foto sampul, dan semua catatan/kutipan buku tersebut.
-* [ ] Perbaikan tampilan kartu (thumbnail sampul + placeholder) dan UI yang lebih menarik.
-* [ ] Mode gelap (Deep Sea Dark).
+* [x] Upload foto sampul: pilih file, kecilkan dengan Canvas, simpan sebagai Blob di IndexedDB.
+* [x] Halaman detail buku: data lengkap, blurb, foto sampul, dan semua catatan/kutipan buku tersebut.
+* [x] Perbaikan tampilan kartu (thumbnail sampul + placeholder) dan UI yang lebih menarik.
+* [x] Mode gelap (Deep Sea Dark).
 * [ ] Pengujian fungsionalitas UI & interaksi modal/form di HP.
 
 ## Phase 3: PWA Integration & Hosting (Minggu 3)
 * [ ] Ikon aplikasi dari logo milik sendiri (192x192, 512x512, versi maskable).
 * [ ] Splash screen memakai logo aplikasi.
-* [ ] Penambahan `manifest.json` (warna tema laut) dan pembuatan `sw.js` (Service Worker) untuk offline-first.
+* [x] Penambahan `manifest.json` (warna tema laut) dan pembuatan `sw.js` (Service Worker) untuk offline-first.
 * [ ] Pengujian offline mode dan audit Lighthouse PWA score.
 * [ ] Push ke GitHub dan deploy ke Vercel (HTTPS); tentukan domain final.
 
